@@ -80,6 +80,23 @@ void checkBoard()
         cout << "You lose :(" << endl;
         game = false;
     }
+
+    // check for tie
+    int l = 0;
+    for (int i = 0; i < 9; i++)
+    {
+        if (board[i] == "X" || board[i] == "O")
+        {
+            l++;
+        }
+    }
+
+    if (l == 9)
+    {
+        drawBoard();
+        cout << "It's a tie :)" << endl;
+        game = false;
+    }
 }
 
 int main()

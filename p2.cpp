@@ -79,6 +79,23 @@ void checkBoard()
         cout << "You lose :(" << endl;
         game = false;
     }
+
+    // check for tie
+    int l = 0;
+    for (int i = 0; i < 9; i++)
+    {
+        if (board[i] == "X" || board[i] == "O")
+        {
+            l++;
+        }
+    }
+
+    if (l == 9)
+    {
+        drawBoard();
+        cout << "It's a tie :)" << endl;
+        game = false;
+    }
 }
 
 int main()
@@ -114,7 +131,7 @@ int main()
             p2Choice = atoi(wr_data);
         } while ((position != "0") && (position != "1") && (position != "2") && (position != "3") && (position != "4") &&
                      (position != "5") && (position != "6") && (position != "7") && (position != "8") ||
-                 (board[p1Choice] == "X" || board[p1Choice] == "O"));
+                 (board[p2Choice] == "X" || board[p2Choice] == "O"));
 
         write(fd_wr, wr_data, strlen(wr_data) + 1);
         board[p2Choice] = "O";
