@@ -101,14 +101,15 @@ int main()
         drawBoard();
         do
         {
-            printf("Please choose a position [0-8]: ");
+            printf("Please choose an open position [0-8]: ");
             fgets(wr_data, MAX, stdin);
             wr_data[strlen(wr_data) - 1] = '\0'; // '\n' is replaced by NULL ('\0')
             position = wr_data;
+            p1Choice = atoi(wr_data);
         } while ((position != "0") && (position != "1") && (position != "2") && (position != "3") && (position != "4") &&
-                 (position != "5") && (position != "6") && (position != "7") && (position != "8"));
+                     (position != "5") && (position != "6") && (position != "7") && (position != "8") ||
+                 (board[p1Choice] == "X" || board[p1Choice] == "O"));
 
-        p1Choice = atoi(wr_data);
         write(fd_wr, wr_data, strlen(wr_data) + 1);
         board[p1Choice] = "X";
         checkBoard();
