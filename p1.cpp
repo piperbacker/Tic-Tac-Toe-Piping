@@ -30,10 +30,6 @@ void drawBoard()
     cout << "+-+-+-+" << endl;
 }
 
-void move()
-{
-    board[p1Choice] = "X";
-}
 
 void checkBoard()
 {

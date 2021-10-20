@@ -29,10 +29,6 @@ void drawBoard()
     cout << "+-+-+-+" << endl;
 }
 
-void move()
-{
-    board[p1Choice] = "O";
-}
 
 void checkBoard()
 {
