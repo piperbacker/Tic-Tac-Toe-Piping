@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <bits/stdc++.h>
 #include <iostream>
 #include <string>
 using namespace std;
@@ -13,12 +14,11 @@ using namespace std;
 #include "my_const.h"
 
 string board[9] = {".", "1", "2", "3", "4", "5", "6", "7", "8"};
+string position;
 int p1Choice;
 int p2Choice;
-string p1Mark = "X";
 bool game = true;
 string winner;
-//string response;
 
 void drawBoard()
 {
@@ -30,44 +30,9 @@ void drawBoard()
     cout << "+-+-+-+" << endl;
 }
 
-void p1Move()
+void move()
 {
-
-    if (board[p1Choice] != "X" && board[p1Choice] != "O")
-    {
-        if (p1Choice >= 0 && p1Choice <= 8)
-        {
-            board[p1Choice] = "X";
-        }
-        else
-        {
-            cout << "Please pick a value between 0-8" << endl;
-        }
-    }
-    else
-    {
-        cout << "This move has already been played, please pick a new move" << endl;
-    }
-}
-
-void p2Move()
-{
-
-    if (board[p2Choice] != "X" && board[p2Choice] != "O")
-    {
-        if (p2Choice >= 0 && p2Choice <= 8)
-        {
-            board[p2Choice] = "O";
-        }
-        else
-        {
-            cout << "Please pick a value between 0-8" << endl;
-        }
-    }
-    else
-    {
-        cout << "This move has already been played, please pick a new move" << endl;
-    }
+    board[p1Choice] = "X";
 }
 
 void checkBoard()
@@ -105,11 +70,13 @@ void checkBoard()
 
     if (winner == "X")
     {
+        drawBoard();
         cout << "Winner winner chicken dinner!" << endl;
         game = false;
     }
     else if (winner == "O")
     {
+        drawBoard();
         cout << "You lose :(" << endl;
         game = false;
     }
@@ -122,6 +89,8 @@ int main()
     int f1 = mkfifo(myfifo_1to2, 0666);
     int f2 = mkfifo(myfifo_2to1, 0666);
 
+    cout << "Waiting for opponent..." << endl;
+
     char rd_data[MAX], wr_data[MAX];
 
     int fd_wr = open(myfifo_1to2, O_WRONLY);
@@ -130,32 +99,30 @@ int main()
     while (game)
     {
         drawBoard();
-        printf("Please choose a position [0-8]: ");
-        fgets(wr_data, MAX, stdin);
-        wr_data[strlen(wr_data) - 1] = '\0'; // '\n' is replaced by NULL ('\0')
-        write(fd_wr, wr_data, strlen(wr_data) + 1);
+        do
+        {
+            printf("Please choose a position [0-8]: ");
+            fgets(wr_data, MAX, stdin);
+            wr_data[strlen(wr_data) - 1] = '\0'; // '\n' is replaced by NULL ('\0')
+            position = wr_data;
+        } while ((position != "0") && (position != "1") && (position != "2") && (position != "3") && (position != "4") &&
+                 (position != "5") && (position != "6") && (position != "7") && (position != "8"));
+
         p1Choice = atoi(wr_data);
-        p1Move();
+        write(fd_wr, wr_data, strlen(wr_data) + 1);
+        board[p1Choice] = "X";
         checkBoard();
-        if (game == false )
+        if (game == false)
             break;
 
+        drawBoard();
         read(fd_rd, rd_data, sizeof(rd_data));
         p2Choice = atoi(rd_data);
-        p2Move();
+        board[p2Choice] = "O";
         checkBoard();
-        drawBoard();
     }
     close(fd_wr);
     close(fd_rd);
     unlink(myfifo_1to2);
     unlink(myfifo_2to1);
-
-    /*cout << "Would you like to play again? [y/n]" << endl;
-    cin >> response;
-
-    if (response == "y")
-    {
-        main();
-    }*/
 }
