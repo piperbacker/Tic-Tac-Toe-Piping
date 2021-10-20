@@ -17,7 +17,7 @@ string position;
 int p2Choice;
 int p1Choice;
 bool game = true;
-string winner;
+string winner = "";
 
 void drawBoard()
 {
@@ -90,7 +90,7 @@ void checkBoard()
         }
     }
 
-    if (l == 9)
+    if (winner== "" && l == 9)
     {
         drawBoard();
         cout << "It's a tie :)" << endl;
