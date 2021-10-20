@@ -8,14 +8,13 @@
 
 #include <iostream>
 #include <string>
-using namespace std; 
+using namespace std;
 
 #include "my_const.h"
 
-
-
 string board[9] = {".", "1", "2", "3", "4", "5", "6", "7", "8"};
 int p1Choice;
+int p2Choice;
 string p1Mark = "X";
 bool game;
 string winner;
@@ -31,16 +30,34 @@ void drawBoard()
     cout << "+-+-+-+" << endl;
 }
 
-void playerMove()
+void p1Move()
 {
-    cout << "Please choose a position [0-8]: ";
-    cin >> p1Choice;
 
     if (board[p1Choice] != "X" && board[p1Choice] != "O")
     {
         if (p1Choice >= 0 && p1Choice <= 8)
         {
             board[p1Choice] = "X";
+        }
+        else
+        {
+            cout << "Please pick a value between 0-8" << endl;
+        }
+    }
+    else
+    {
+        cout << "This move has already been played, please pick a new move" << endl;
+    }
+}
+
+void p2Move()
+{
+
+    if (board[p2Choice] != "X" && board[p2Choice] != "O")
+    {
+        if (p2Choice >= 0 && p2Choice <= 8)
+        {
+            board[p2Choice] = "O";
         }
         else
         {
@@ -88,13 +105,11 @@ void checkBoard()
 
     if (winner == "X")
     {
-        drawBoard();
         cout << "Winner winner chicken dinner!" << endl;
         game = false;
     }
     else if (winner == "O")
     {
-        drawBoard();
         cout << "You lose :(" << endl;
         game = false;
     }
@@ -105,45 +120,36 @@ int main()
     cout << "Welcome to Tic Tac Toe Game!" << endl;
 
     int f1 = mkfifo(myfifo_1to2, 0666);
-	int f2 = mkfifo(myfifo_2to1, 0666);
-	//printf("@p1: f1 = %d  f2 = %d\n", f1, f2);
+    int f2 = mkfifo(myfifo_2to1, 0666);
 
     char rd_data[MAX], wr_data[MAX];
 
     int fd_wr = open(myfifo_1to2, O_WRONLY);
-	int	fd_rd = open(myfifo_2to1, O_RDONLY);
+    int fd_rd = open(myfifo_2to1, O_RDONLY);
 
-    while (true) {
-		printf("Enter a message (Q to quit): ");
-        drawBoard();
-        playerMove();
-        checkBoard();
-		fgets(wr_data, MAX, stdin);
-		wr_data[strlen(wr_data) - 1] = '\0'; // '\n' is replaced by NULL ('\0')
-		write(fd_wr, wr_data, strlen(wr_data) + 1);
-		if (strcmp(wr_data, "Q") == 0)
-			break;
-
-		read(fd_rd, rd_data, sizeof(rd_data));
-		printf("received: %s\n", rd_data);
-	}
-	close(fd_wr);
-	close(fd_rd);
-	unlink(myfifo_1to2);
-	unlink(myfifo_2to1);
-
-    
-	//printf("Prog1 exits\n");
-
-    /*game = true;
-    cout << "Welcome to Tic Tac Toe Game!" << endl;
-
-    while (game == true)
+    while (true)
     {
         drawBoard();
-        playerMove();
+        printf("Please choose a position [0-8]: ");
+        fgets(wr_data, MAX, stdin);
+        wr_data[strlen(wr_data) - 1] = '\0'; // '\n' is replaced by NULL ('\0')
+        write(fd_wr, wr_data, strlen(wr_data) + 1);
+        p1Choice = atoi(wr_data);
+        p1Move();
         checkBoard();
-    }*/
+        if (strcmp(wr_data, "Q") == 0)
+            break;
+
+        read(fd_rd, rd_data, sizeof(rd_data));
+        p2Choice = atoi(rd_data);
+        p2Move();
+        checkBoard();
+        drawBoard();
+    }
+    close(fd_wr);
+    close(fd_rd);
+    unlink(myfifo_1to2);
+    unlink(myfifo_2to1);
 
     /*cout << "Would you like to play again? [y/n]" << endl;
     cin >> response;

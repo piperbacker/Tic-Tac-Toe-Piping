@@ -1,9 +1,9 @@
    
-p1: prog1.cpp my_const.h
-	g++ -g prog1.cpp -o p1
+p1: p1.cpp my_const.h
+	g++ -g p1.cpp -o p1
 
-p2: prog2.cpp my_const.h
-	g++ -g prog2.cpp -o p2
+p2: p2.cpp my_const.h
+	g++ -g p2.cpp -o p2
 
 clean:
 	rm p1 p2
