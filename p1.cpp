@@ -16,9 +16,9 @@ string board[9] = {".", "1", "2", "3", "4", "5", "6", "7", "8"};
 int p1Choice;
 int p2Choice;
 string p1Mark = "X";
-bool game;
+bool game = true;
 string winner;
-string response;
+//string response;
 
 void drawBoard()
 {
@@ -127,7 +127,7 @@ int main()
     int fd_wr = open(myfifo_1to2, O_WRONLY);
     int fd_rd = open(myfifo_2to1, O_RDONLY);
 
-    while (true)
+    while (game)
     {
         drawBoard();
         printf("Please choose a position [0-8]: ");
@@ -137,7 +137,7 @@ int main()
         p1Choice = atoi(wr_data);
         p1Move();
         checkBoard();
-        if (strcmp(wr_data, "Q") == 0)
+        if (game == false )
             break;
 
         read(fd_rd, rd_data, sizeof(rd_data));
